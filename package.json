@@ -10,8 +10,8 @@
     "format": "prettier src/ --write"
   },
   "dependencies": {
-    "@auth/core": "^0.36.0",
-    "@convex-dev/auth": "^0.0.74",
+    "@auth/core": "^0.37.0",
+    "@convex-dev/auth": "^0.0.78",
     "@convex-dev/react-query": "^0.0.0-alpha.8",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
@@ -37,7 +37,7 @@
     "@types/emoji-mart": "^3.0.14",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "convex": "^1.16.2",
+    "convex": "^1.17.4",
     "cookie": "^1.0.1",
     "date-fns": "^4.1.0",
     "emoji-mart": "^5.6.0",

@@ -6,12 +6,12 @@ import {
 
 const isAuthPage = createRouteMatcher(['/auth']);
 
-export default convexAuthNextjsMiddleware((request, { convexAuth }) => {
-  if (isAuthPage(request) && convexAuth.isAuthenticated()) {
+export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
+  if (isAuthPage(request) && (await convexAuth.isAuthenticated())) {
     return nextjsMiddlewareRedirect(request, '/');
   }
 
-  if (!isAuthPage(request) && !convexAuth.isAuthenticated()) {
+  if (!isAuthPage(request) && !(await convexAuth.isAuthenticated())) {
     return nextjsMiddlewareRedirect(request, '/auth');
   }
 });
