@@ -10,7 +10,6 @@ export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
   if (isAuthPage(request) && (await convexAuth.isAuthenticated())) {
     return nextjsMiddlewareRedirect(request, '/');
   }
-
   if (!isAuthPage(request) && !(await convexAuth.isAuthenticated())) {
     return nextjsMiddlewareRedirect(request, '/auth');
   }
