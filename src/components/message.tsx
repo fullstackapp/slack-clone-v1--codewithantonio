@@ -1,13 +1,13 @@
-import { useConvexMutation } from '@convex-dev/react-query';
-import { useMutation } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
+import { useRemoveMessage } from '@/features/messages/api/use-remove-message';
+import { useUpdateMessage } from '@/features/messages/api/use-update-message';
+import { useToggleReactions } from '@/features/reactions/api/use-toggle-reactions';
 import useConfirm from '@/hooks/use-confirm';
 import { usePanel } from '@/hooks/use-panel';
 import { cn, createInitials, formatFullTime } from '@/lib/utils';
 
-import { api } from '../../convex/_generated/api';
 import { Doc, Id } from '../../convex/_generated/dataModel';
 import Editor from './editor';
 import Hint from './hint';
@@ -69,18 +69,12 @@ const Message = ({
   const { parentMessageId, onOpenMessage, onCloseMessage } = usePanel();
 
   const { mutate: updateMessage, isPending: updateMessageIsPending } =
-    useMutation({
-      mutationFn: useConvexMutation(api.messages.update),
-    });
+    useUpdateMessage();
 
   const { mutate: removeMessage, isPending: removeMessageIsPending } =
-    useMutation({
-      mutationFn: useConvexMutation(api.messages.remove),
-    });
+    useRemoveMessage();
 
-  const { mutate: toggleReaction } = useMutation({
-    mutationFn: useConvexMutation(api.reactions.toggle),
-  });
+  const { mutate: toggleReaction } = useToggleReactions();
 
   const isPending = updateMessageIsPending || removeMessageIsPending;
   const avatarFallback = createInitials(authorName);

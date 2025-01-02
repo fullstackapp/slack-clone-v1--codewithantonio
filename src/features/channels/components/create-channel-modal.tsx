@@ -1,8 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useConvexMutation } from '@convex-dev/react-query';
-import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -15,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
-import { api } from '../../../../convex/_generated/api';
+import { useCreateChannel } from '../api/use-create-channel';
 import { useCreateChannelModal } from '../store/use-create-channel-modal';
 
 const CreateChannelModal = () => {
@@ -24,9 +22,8 @@ const CreateChannelModal = () => {
   const workspaceId = useWorkspaceId();
   const router = useRouter();
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: useConvexMutation(api.channels.create),
-  });
+  const { mutate: createChannel, isPending: createChannelIsPending } =
+    useCreateChannel();
 
   const handleClose = () => {
     setOpen(false);
@@ -40,7 +37,7 @@ const CreateChannelModal = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutate(
+    createChannel(
       { name, workspaceId },
       {
         onSuccess(channelId) {
@@ -65,7 +62,7 @@ const CreateChannelModal = () => {
           <Input
             value={name}
             onChange={handleChange}
-            disabled={isPending}
+            disabled={createChannelIsPending}
             required
             autoFocus
             minLength={3}
@@ -73,7 +70,7 @@ const CreateChannelModal = () => {
             placeholder='e.g. plan-budget'
           />
           <div className='flex justify-end'>
-            <Button disabled={isPending}>Create</Button>
+            <Button disabled={createChannelIsPending}>Create</Button>
           </div>
         </form>
       </DialogContent>

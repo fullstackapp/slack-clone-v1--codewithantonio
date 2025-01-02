@@ -1,11 +1,8 @@
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { MdOutlineAddReaction } from 'react-icons/md';
 
-import { useWorkspaceId } from '@/hooks/use-workspace-id';
+import { useCurrentMember } from '@/features/members/api/use-current-member';
 import { cn } from '@/lib/utils';
 
-import { api } from '../../convex/_generated/api';
 import { Doc, Id } from '../../convex/_generated/dataModel';
 import EmojiPopover from './emoji-popover';
 
@@ -20,11 +17,7 @@ interface ReactionsProps {
 }
 
 export default function Reactions({ reactions, onChange }: ReactionsProps) {
-  const workspaceId = useWorkspaceId();
-
-  const { data: currentMember } = useQuery(
-    convexQuery(api.members.current, { workspaceId })
-  );
+  const { data: currentMember } = useCurrentMember();
 
   if (reactions.length === 0 || !currentMember) {
     return null;

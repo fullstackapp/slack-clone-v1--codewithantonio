@@ -1,15 +1,13 @@
 import { useState } from 'react';
 
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { Loader, TriangleAlert, XIcon } from 'lucide-react';
 
 import Message from '@/components/message';
 import { Button } from '@/components/ui/button';
-import { useWorkspaceId } from '@/hooks/use-workspace-id';
+import { useCurrentMember } from '@/features/members/api/use-current-member';
 
-import { api } from '../../../../convex/_generated/api';
 import { Id } from '../../../../convex/_generated/dataModel';
+import { useGetMessage } from '../api/use-get-message';
 
 interface ThreadProps {
   messageId: Id<'messages'>;
@@ -18,15 +16,13 @@ interface ThreadProps {
 
 export default function Thread({ messageId, onClose }: ThreadProps) {
   const [editingId, setEditingId] = useState<Id<'messages'> | null>(null);
-  const workspaceId = useWorkspaceId();
 
-  const { data: currentMember, isPending: isPendingCurrentMember } = useQuery(
-    convexQuery(api.members.current, { workspaceId })
-  );
+  const { data: currentMember, isPending: isPendingCurrentMember } =
+    useCurrentMember();
 
-  const { data: message, isPending: isPendingMessage } = useQuery(
-    convexQuery(api.messages.getById, { id: messageId, workspaceId })
-  );
+  const { data: message, isPending: isPendingMessage } = useGetMessage({
+    messageId,
+  });
 
   if (isPendingMessage || isPendingCurrentMember) {
     return (

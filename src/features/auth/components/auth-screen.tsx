@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { SignInFlow } from '../types';
+import { SignInFlow } from '../lib/types';
 import SignInCard from './sign-in-card';
 import SignUpCard from './sign-up-card';
 

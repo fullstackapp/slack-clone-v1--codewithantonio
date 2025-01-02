@@ -1,15 +1,14 @@
 import { ChangeEvent, useRef, useState } from 'react';
 
-import { useConvexMutation } from '@convex-dev/react-query';
-import { useMutation } from '@tanstack/react-query';
 import { Editor as EditorType } from '@tiptap/react';
 import { toast } from 'sonner';
 
 import Editor from '@/components/editor';
+import { useCreateMessage } from '@/features/messages/api/use-create-message';
+import { useGenerateUploadUrl } from '@/features/messages/api/use-generate-upload-url';
 import { useChannelId } from '@/hooks/use-channel-id';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
-import { api } from '../../../../convex/_generated/api';
 import { Id } from '../../../../convex/_generated/dataModel';
 
 type CreateMessageValuse = {
@@ -33,13 +32,9 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
   const editorRef = useRef<EditorType | null>(null);
   const imageRef = useRef<HTMLInputElement | null>(null);
 
-  const createMessage = useMutation({
-    mutationFn: useConvexMutation(api.messages.create),
-  });
+  const createMessage = useCreateMessage();
 
-  const generateUploadUrl = useMutation({
-    mutationFn: useConvexMutation(api.upload.generateUploadUrl),
-  });
+  const generateUploadUrl = useGenerateUploadUrl();
 
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     setImage(e.target.files![0]);
@@ -88,7 +83,6 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
 
       await createMessage.mutateAsync(values);
       editorRef.current?.commands.clearContent();
-
       editorRef.current?.commands.focus();
       handleImageDelete();
     } catch (error) {

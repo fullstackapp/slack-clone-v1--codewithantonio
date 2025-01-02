@@ -1,15 +1,12 @@
 import { useState } from 'react';
 
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { differenceInMinutes, format } from 'date-fns';
 import { Loader } from 'lucide-react';
 
+import { useCurrentMember } from '@/features/members/api/use-current-member';
 import { UseGetMessagesResponse } from '@/features/messages/api/use-get-messages';
-import { useWorkspaceId } from '@/hooks/use-workspace-id';
 import { formatDateLabel } from '@/lib/utils';
 
-import { api } from '../../convex/_generated/api';
 import { Id } from '../../convex/_generated/dataModel';
 import ChannelHero from './channel-hero';
 import Message from './message';
@@ -40,11 +37,7 @@ const MessageList = ({
 }: MessageListProps) => {
   const [editingId, setEditingId] = useState<Id<'messages'> | null>(null);
 
-  const workspaceId = useWorkspaceId();
-
-  const { data: currentMember, isPending: isPendingCurrentMember } = useQuery(
-    convexQuery(api.members.current, { workspaceId })
-  );
+  const { data: currentMember } = useCurrentMember();
 
   const groupedMessagesByDate = data?.reduce(
     (acc, message) => {
@@ -61,6 +54,7 @@ const MessageList = ({
     },
     {} as Record<string, typeof data>
   );
+
   return (
     <div className='messages-scrollbar mb-4 flex flex-1 flex-col-reverse gap-2 overflow-y-auto'>
       {Object.entries(groupedMessagesByDate).map(([key, value]) => (

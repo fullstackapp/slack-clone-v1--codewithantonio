@@ -1,6 +1,6 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { PaginationResult, paginationOptsValidator } from 'convex/server';
-import { v } from 'convex/values';
+import { ConvexError, v } from 'convex/values';
 
 import { Doc, Id } from './_generated/dataModel';
 import { QueryCtx, mutation, query } from './_generated/server';
@@ -202,10 +202,10 @@ export const get = query({
       throw new Error('Client is not authenticated');
     }
 
-    const member = await getMember(ctx, args.workspaceId, userId);
-
-    if (member === null) {
-      throw new Error('Unathorized');
+    // Check if workspace exists
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) {
+      throw new ConvexError('Workspace not found');
     }
 
     let _conversationId = args.conversationId;

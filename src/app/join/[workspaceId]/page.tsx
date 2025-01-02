@@ -5,28 +5,23 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
-import { convexQuery, useConvexMutation } from '@convex-dev/react-query';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import VerificationInput from 'react-verification-input';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { useGetWorkspaceInfo } from '@/features/workspaces/api/use-get-workspace-info';
+import { useJoinWorkspace } from '@/features/workspaces/api/use-join-workspace';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
-
-import { api } from '../../../../convex/_generated/api';
 
 const JoinPage = () => {
   const workspaceId = useWorkspaceId();
   const router = useRouter();
 
-  const { data: workspaceInfo, isPending: isPendingWorkspaceInfo } = useQuery(
-    convexQuery(api.workspaces.getInfoById, { id: workspaceId })
-  );
+  const { data: workspaceInfo, isPending: isPendingWorkspaceInfo } =
+    useGetWorkspaceInfo();
 
-  const { mutate: join, isPending: isPendingJoin } = useMutation({
-    mutationFn: useConvexMutation(api.workspaces.join),
-  });
+  const { mutate: join, isPending: isPendingJoin } = useJoinWorkspace();
 
   const isMember = useMemo(() => workspaceInfo?.isMember, [workspaceInfo]);
 

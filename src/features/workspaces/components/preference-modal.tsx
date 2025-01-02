@@ -1,8 +1,6 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-import { useConvexMutation } from '@convex-dev/react-query';
-import { useMutation } from '@tanstack/react-query';
 import { TrashIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -15,7 +13,8 @@ import {
 import useConfirm from '@/hooks/use-confirm';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
-import { api } from '../../../../convex/_generated/api';
+import { useRemoveWorkspace } from '../api/use-remove-workspace';
+import { useUpdateWorkspace } from '../api/use-update-workspace';
 import PreferenceEditModal from './preference-edit-modal';
 
 interface PreferenceModalProps {
@@ -40,13 +39,9 @@ const PreferenceModal = ({
 
   const workspaceId = useWorkspaceId();
   const { mutate: updateWorkspace, isPending: updateWorkspaceIsPending } =
-    useMutation({
-      mutationFn: useConvexMutation(api.workspaces.update),
-    });
+    useUpdateWorkspace();
   const { mutate: removeWorkspace, isPending: removeWorkspaceIsPending } =
-    useMutation({
-      mutationFn: useConvexMutation(api.workspaces.remove),
-    });
+    useRemoveWorkspace();
 
   const handleEdit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,19 +65,14 @@ const PreferenceModal = ({
       return;
     }
 
-    removeWorkspace(
-      { id: workspaceId },
-      {
-        onSuccess: () => {
-          toast.success('Workspace deleted');
-          setOpen(false);
-          router.replace('/');
-        },
-        onError: () => {
-          toast.error('Failed to delete workspace');
-        },
-      }
-    );
+    try {
+      await removeWorkspace({ id: workspaceId });
+      toast.success('Workspace deleted');
+      setOpen(false);
+      router.push('/');
+    } catch {
+      toast.error('Failed to delete workspace');
+    }
   };
 
   return (

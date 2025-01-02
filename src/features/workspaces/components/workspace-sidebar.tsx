@@ -1,5 +1,3 @@
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import {
   AlertTriangle,
   HashIcon,
@@ -8,33 +6,27 @@ import {
   SendHorizonal,
 } from 'lucide-react';
 
+import { useGetChannels } from '@/features/channels/api/use-get-channels';
 import { useCreateChannelModal } from '@/features/channels/store/use-create-channel-modal';
+import { useCurrentMember } from '@/features/members/api/use-current-member';
+import { useGetMembers } from '@/features/members/api/use-get-members';
 import { useChannelId } from '@/hooks/use-channel-id';
-import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
-import { api } from '../../../../convex/_generated/api';
+import { useGetWorkspace } from '../api/use-get-workspace';
 import SidebarItem from './sidebar-item';
 import UserItem from './user-item';
 import WorkspaceHeader from './workspace-header';
 import WorkspaceSection from './workspace-section';
 
 const WorkspaceSidebar = () => {
-  const workspaceId = useWorkspaceId();
   const channelId = useChannelId();
   const [_open, setOpen] = useCreateChannelModal();
 
-  const { data: currentMember, isPending: isPendingCurrentMember } = useQuery(
-    convexQuery(api.members.current, { workspaceId })
-  );
-  const { data: workspace, isPending: isPendingWorkspace } = useQuery(
-    convexQuery(api.workspaces.getById, { id: workspaceId })
-  );
-  const { data: channels, isPending: isPendingChannels } = useQuery(
-    convexQuery(api.channels.get, { workspaceId })
-  );
-  const { data: members, isPending: isPendingMembers } = useQuery(
-    convexQuery(api.members.get, { id: workspaceId })
-  );
+  const { data: currentMember, isPending: isPendingCurrentMember } =
+    useCurrentMember();
+  const { data: workspace, isPending: isPendingWorkspace } = useGetWorkspace();
+  const { data: channels, isPending: isPendingChannels } = useGetChannels();
+  const { data: members, isPending: isPendingMembers } = useGetMembers();
 
   if (
     isPendingCurrentMember ||

@@ -3,33 +3,24 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { Loader, TriangleAlert } from 'lucide-react';
 
+import { useGetChannels } from '@/features/channels/api/use-get-channels';
 import { useCreateChannelModal } from '@/features/channels/store/use-create-channel-modal';
+import { useCurrentMember } from '@/features/members/api/use-current-member';
+import { useGetWorkspace } from '@/features/workspaces/api/use-get-workspace';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
-import { api } from '../../../../convex/_generated/api';
-
 const WorkspaceIdPage = () => {
-  const workspaceId = useWorkspaceId();
-
-  const router = useRouter();
-
   const [open, setOpen] = useCreateChannelModal();
 
-  const { data: workspace, isPending: isPendingWorkspace } = useQuery(
-    convexQuery(api.workspaces.getById, { id: workspaceId })
-  );
+  const workspaceId = useWorkspaceId();
+  const router = useRouter();
 
-  const { data: channels, isPending: isPendingChannels } = useQuery(
-    convexQuery(api.channels.get, { workspaceId })
-  );
-
-  const { data: currentMember, isPending: isPendingCurrentMember } = useQuery(
-    convexQuery(api.members.current, { workspaceId })
-  );
+  const { data: workspace, isPending: isPendingWorkspace } = useGetWorkspace();
+  const { data: channels, isPending: isPendingChannels } = useGetChannels();
+  const { data: currentMember, isPending: isPendingCurrentMember } =
+    useCurrentMember();
 
   useEffect(() => {
     const channelId = channels?.[0]?._id;

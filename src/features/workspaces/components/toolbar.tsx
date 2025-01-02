@@ -1,17 +1,11 @@
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { Info, Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
-import { api } from '../../../../convex/_generated/api';
+import { useGetWorkspace } from '../api/use-get-workspace';
 
 const Toolbar = () => {
-  const workspaceId = useWorkspaceId();
-  const { data } = useQuery(
-    convexQuery(api.workspaces.getById, { id: workspaceId })
-  );
+  const { data: workspace } = useGetWorkspace();
 
   return (
     <div className='flex items-center justify-between bg-[#481349] p-1.5'>
@@ -20,7 +14,7 @@ const Toolbar = () => {
         <Button className='h-7 w-full justify-start bg-accent/25 px-2 hover:bg-accent/25'>
           <Search className='mr-2 size-4 text-white' />
           <span className='text-xs text-white'>
-            Search in {data?.name.toLowerCase()}
+            Search in {workspace?.name.toLowerCase()}
           </span>
         </Button>
       </div>

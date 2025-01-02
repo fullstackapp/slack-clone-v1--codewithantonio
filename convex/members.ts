@@ -32,7 +32,7 @@ export const current = query({
 });
 
 export const get = query({
-  args: { id: v.id('workspaces') },
+  args: { workspaceId: v.id('workspaces') },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (userId === null) {
@@ -42,7 +42,7 @@ export const get = query({
     const member = await ctx.db
       .query('members')
       .withIndex('by_workspace_id_and_user_id', (q) =>
-        q.eq('workspaceId', args.id).eq('userId', userId)
+        q.eq('workspaceId', args.workspaceId).eq('userId', userId)
       )
       .unique();
 
@@ -52,7 +52,9 @@ export const get = query({
 
     const members = await ctx.db
       .query('members')
-      .withIndex('by_workspace_id', (q) => q.eq('workspaceId', args.id))
+      .withIndex('by_workspace_id', (q) =>
+        q.eq('workspaceId', args.workspaceId)
+      )
       .collect();
 
     const membersWithUser = [];

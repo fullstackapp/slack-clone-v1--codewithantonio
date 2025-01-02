@@ -1,8 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useConvexMutation } from '@convex-dev/react-query';
-import { useMutation } from '@tanstack/react-query';
 import { TrashIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -16,7 +14,8 @@ import { useChannelId } from '@/hooks/use-channel-id';
 import useConfirm from '@/hooks/use-confirm';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
-import { api } from '../../../../convex/_generated/api';
+import { useRemoveChannel } from '../api/use-remove-channel';
+import { useUpdateChannel } from '../api/use-update-channel';
 import ChannelEditModal from './channel-edit-modal';
 
 interface ChannelModalProps {
@@ -39,14 +38,10 @@ const ChannelModal = ({ open, setOpen, initialValue }: ChannelModalProps) => {
   );
 
   const { mutate: updateChannel, isPending: updateChannelIsPending } =
-    useMutation({
-      mutationFn: useConvexMutation(api.channels.update),
-    });
+    useUpdateChannel();
 
   const { mutate: removeChannel, isPending: removeChannelIsPending } =
-    useMutation({
-      mutationFn: useConvexMutation(api.channels.remove),
-    });
+    useRemoveChannel();
 
   const handleEdit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 
-import { SignInFlow } from '../types';
+import { SignInFlow } from '../lib/types';
 
 interface SignUpCardProps {
   setState: (state: SignInFlow) => void;

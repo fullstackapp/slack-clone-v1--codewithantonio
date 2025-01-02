@@ -1,34 +1,21 @@
 'use client';
 
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { Loader, TriangleAlert } from 'lucide-react';
 
 import MessageList from '@/components/message-list';
+import { useGetChannel } from '@/features/channels/api/use-get-channel';
 import ChannelHeader from '@/features/channels/components/channel-header';
 import ChatInput from '@/features/channels/components/chat-input';
+import { useCurrentMember } from '@/features/members/api/use-current-member';
 import { useGetMessages } from '@/features/messages/api/use-get-messages';
-import { useChannelId } from '@/hooks/use-channel-id';
-import { useWorkspaceId } from '@/hooks/use-workspace-id';
-
-import { api } from '../../../../../../convex/_generated/api';
 
 const ChannelIdPage = () => {
-  const channelId = useChannelId();
-  const workspaceId = useWorkspaceId();
+  const { results, status, loadMore } = useGetMessages({});
 
-  const { results, status, loadMore } = useGetMessages({
-    workspaceId,
-    channelId,
-  });
+  const { data: channel, isPending: isPendingChannel } = useGetChannel();
 
-  const { data: channel, isPending: isPendingChannel } = useQuery(
-    convexQuery(api.channels.getById, { id: channelId })
-  );
-
-  const { data: currentMember, isPending: isPendingCurrentMember } = useQuery(
-    convexQuery(api.members.current, { workspaceId })
-  );
+  const { data: currentMember, isPending: isPendingCurrentMember } =
+    useCurrentMember();
 
   if (
     isPendingChannel ||

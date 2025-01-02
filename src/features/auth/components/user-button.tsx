@@ -1,8 +1,6 @@
 'use client';
 
 import { useAuthActions } from '@convex-dev/auth/react';
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { Loader, LogOut } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,26 +12,27 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { createInitials } from '@/lib/utils';
 
-import { api } from '../../../../convex/_generated/api';
+import { useCurrentUser } from '../api/use-current-user';
 
 const UserButton = () => {
   const { signOut } = useAuthActions();
 
-  const { data, isPending } = useQuery(convexQuery(api.users.current, {}));
+  const { data: currentUser, isPending: isPendingCurrentUser } =
+    useCurrentUser();
 
   const onSignOut = async () => {
     await signOut();
   };
 
-  if (isPending) {
+  if (isPendingCurrentUser) {
     return <Loader className='size-4 animate-spin text-muted-foreground' />;
   }
 
-  if (!data) {
+  if (!currentUser) {
     return null;
   }
 
-  const { name, image } = data;
+  const { name, image } = currentUser;
 
   const avatarFallback = createInitials(name);
 

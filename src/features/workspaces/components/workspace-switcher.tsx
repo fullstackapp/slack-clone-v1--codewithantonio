@@ -1,7 +1,5 @@
 import { useRouter } from 'next/navigation';
 
-import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { Loader, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -14,29 +12,31 @@ import {
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 import { createInitials } from '@/lib/utils';
 
-import { api } from '../../../../convex/_generated/api';
+import { useGetWorkspace } from '../api/use-get-workspace';
+import { useGetWorkspaces } from '../api/use-get-workspaces';
 import { useCreateWorkspaceModal } from '../store/use-create-workspace-modal';
 
 const WorkspaceSwitcher = () => {
-  const workspaceId = useWorkspaceId();
-  const { data: workspaces, isPending: isPendingWorkspaces } = useQuery(
-    convexQuery(api.workspaces.get, {})
-  );
-  const { data: workspace, isPending: isPendingWorkspace } = useQuery(
-    convexQuery(api.workspaces.getById, { id: workspaceId })
-  );
   const [_open, setOpen] = useCreateWorkspaceModal();
+
+  const workspaceId = useWorkspaceId();
   const router = useRouter();
+
+  const { data: workspaces, isPending: isPendingWorkspaces } =
+    useGetWorkspaces();
+  const { data: workspace, isPending: isPendingWorkspace } = useGetWorkspace();
 
   const filteredWorkspaces = workspaces?.filter(
     (workspace) => workspace._id !== workspaceId
   );
 
+  const isLoading = isPendingWorkspace || isPendingWorkspaces;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className='relative size-9 overflow-hidden bg-[#ababad] text-xl font-semibold text-slate-800 hover:bg-[#ababad]/80'>
-          {isPendingWorkspace ? (
+          {isLoading ? (
             <Loader className='size-5 shrink-0 animate-spin' />
           ) : (
             createInitials(workspace?.name)
