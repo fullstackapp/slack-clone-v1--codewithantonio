@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import { useConvexMutation } from '@convex-dev/react-query';
-import { useMutation } from '@tanstack/react-query';
 import { Copy, RefreshCcw } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -19,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
-import { api } from '../../../../convex/_generated/api';
+import { useNewJoinCode } from '../api/use-new-join-code';
 
 interface InviteModalProps {
   open: boolean;
@@ -34,9 +32,7 @@ const InviteModal = ({ open, setOpen, name, joinCode }: InviteModalProps) => {
   const inviteLink = `${window.location.origin}/join/${workspaceId}`;
 
   const { mutate: updateJoinCode, isPending: updateJoinCodeIsPending } =
-    useMutation({
-      mutationFn: useConvexMutation(api.workspaces.newJoinCode),
-    });
+    useNewJoinCode();
 
   const handleCopy = (inputValue: string, label: string) => {
     navigator.clipboard
